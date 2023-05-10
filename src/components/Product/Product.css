@@ -4,7 +4,9 @@
     height: 510px;
     border: 1px solid #95a0a7;
     border-radius: 8px;
+    background-color: rgb(234, 199, 205);
 }
+
 
 .product img {
     width: 280px;
