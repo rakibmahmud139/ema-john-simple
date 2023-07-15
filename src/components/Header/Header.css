@@ -6,7 +6,7 @@
     align-items: center;
     padding-left: 100px;
     padding-right: 100px;
-   
+
 }
 
 nav.header a {
@@ -17,4 +17,8 @@ nav.header a {
 
 nav.header a:hover {
     color: orange;
+}
+
+.user {
+    padding-left: 8px;
 }

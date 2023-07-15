@@ -38,13 +38,13 @@
     margin-bottom: 20px;
 }
 
-.btn-submit{
+.btn-submit {
     width: 415px;
     height: 55px;
     line-height: 25px;
     letter-spacing: 0.0015em;
     font-size: 21px;
-    margin-top: 40px;
+    margin-top: 20px;
     background: rgba(255, 153, 0, 0.3);
     border-radius: 8px;
     border: none;
