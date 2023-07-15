@@ -1,13 +1,32 @@
 // eslint-disable-next-line no-unused-vars
-import React from 'react';
+import React, { useState } from 'react';
 import Cart from '../Cart/Cart';
-import { useLoaderData } from 'react-router-dom';
+import { Link, useLoaderData } from 'react-router-dom';
 import ReviewItem from '../ReviewItem/ReviewItem';
 import './Orders.css';
+import { deleteShoppingCart, removeFromDb } from '../../utilities/fakedb';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCreditCard } from '@fortawesome/free-solid-svg-icons'
+
+
 
 const Orders = () => {
 
-    const cart = useLoaderData();
+    const savedCart = useLoaderData();
+
+    const [cart, setCart] = useState(savedCart);
+
+    const handleRemoveFromCart = (id) => {
+        const remaining = cart.filter(product => product.id !== id);
+        setCart(remaining);
+        removeFromDb(id);
+    }
+
+    const handleClearCart = () => {
+        setCart([]);
+        deleteShoppingCart();
+    }
+
 
     return (
         <div className='shop-container'>
@@ -16,11 +35,22 @@ const Orders = () => {
                     cart.map(product => <ReviewItem
                         key={product.id}
                         product={product}
+                        handleRemoveFromCart={handleRemoveFromCart}
                     />)
                 }
             </div>
             <div className='cart-container'>
-                <Cart cart={cart}></Cart>
+                <Cart
+                    cart={cart}
+                    handleClearCart={handleClearCart}
+                >
+                    <Link className='proceed-link' to="/checkout">
+                        <button className='btn-proceed'>Proceed 
+                            <FontAwesomeIcon className='delete-icon' icon={faCreditCard}
+                            />
+                        </button>
+                    </Link>
+                </Cart>
             </div>
         </div>
     );
