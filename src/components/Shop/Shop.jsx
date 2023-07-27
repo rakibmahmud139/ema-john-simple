@@ -36,40 +36,62 @@ const Shop = () => {
      * Done : 1.Determine the total number of items
      * TODO : 2. Decide on the number of items per page
      * Done : 3. Calculate the number of pages
+     * Done : 4. Determine the current page
     */
 
 
+    // useEffect(() => {
+    //     fetch('http://localhost:5000/products')
+    //         .then(res => res.json())
+    //         .then(data => setProducts(data))
+    // }, [])
+
+
     useEffect(() => {
-        fetch('http://localhost:5000/products')
-            .then(res => res.json())
-            .then(data => setProducts(data))
-    }, [])
+        async function fetchData() {
+            const response = await fetch(`http://localhost:5000/products?page=${currentPage}&limit=${itemsPerPage}`)
+            const data = await response.json();
+            setProducts(data);
+        }
+        fetchData()
+    }, [currentPage, itemsPerPage])
 
 
     useEffect(() => {
         const storedCart = getShoppingCart();
-        const saveCart = [];
+        const ids = Object.keys(storedCart);
 
-        // step 1 : get id 
-        for (const id in storedCart) {
+        fetch('http://localhost:5000/productsByIds', {
+            method: "POST",
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(ids)
+        })
+            .then(res => res.json())
+            .then(cartProducts => {
+                const saveCart = [];
 
-            // step 2 : get the product by using id
-            const addedProduct = products.find(product => product._id === id);
-            if (addedProduct) {
+                // step 1 : get id 
+                for (const id in storedCart) {
 
-                // step 3 : get quantity fo the product
-                const quantity = storedCart[id];
-                addedProduct.quantity = quantity;
+                    // step 2 : get the product by using id
+                    const addedProduct = cartProducts.find(product => product._id === id);
+                    if (addedProduct) {
 
-                // step 4 : add the addedProduct to the saveCart
-                saveCart.push(addedProduct);
-            }
-        }
+                        // step 3 : get quantity fo the product
+                        const quantity = storedCart[id];
+                        addedProduct.quantity = quantity;
 
-        // step 5 : set the cart
-        setCart(saveCart);
+                        // step 4 : add the addedProduct to the saveCart
+                        saveCart.push(addedProduct);
+                    }
+                }
 
-    }, [products])
+                // step 5 : set the cart
+                setCart(saveCart);
+            })
+    }, [])
 
 
     const handlerAddToCart = (product) => {
@@ -98,7 +120,7 @@ const Shop = () => {
     }
 
 
-    const options = [5, 10, 20]
+    const options = [5, 12, 15, 10, 20]
 
     function handleSelectChange(event) {
         setItemsPerPage(parseInt(event.target.value));
@@ -145,7 +167,7 @@ const Shop = () => {
                         key={number}
                         className={currentPage === number ? 'selected' : ''}
                         onClick={() => setCurrentPage(number)}
-                    >{number}</button>)
+                    >{number + 1}</button>)
                 }
 
                 <select value={itemsPerPage} onChange={handleSelectChange}>
